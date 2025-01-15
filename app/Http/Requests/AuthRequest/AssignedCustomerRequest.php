@@ -5,7 +5,7 @@ namespace App\Http\Requests\AuthRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-class LoginRequest extends FormRequest
+class AssignedCustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,38 +22,23 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        // can login by username or email
-        $loginField = $this->getLoginField();
-
-        $rules = [
-
+        // Note that you can add admin or employee
+        return [
+            'employee_id'=>['required','exists:users,id'],
+            'customer_id'=>['required','exists:customers,id'],
         ];
-
-        if ($loginField === 'email') {
-            $rules = [
-                'username' =>['required','string','exists:users,email'],
-                'password' => 'required|string',
-            ];
-        } else {
-            $rules = [
-                'username' =>['required','string','exists:users,username'],
-                'password' => 'required|string',
-            ];
-        }
-
-        return $rules;
     }
 
-    private function getLoginField()
+    public function messages()
     {
-        $login = $this->input('username');
-
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-            return 'email';
-        }
-
-        return 'username';
+        return [
+            'employee_id.required' => 'Employee is required.',
+            'employee_id.exists' => 'The employee has already not existed.',
+            'customer_id.required' => 'Customer is required.',
+            'customer_id.exists' => 'The customer has already not existed.',
+        ];
     }
+
 
 
     protected function failedValidation(Validator $validator)

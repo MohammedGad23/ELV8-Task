@@ -14,4 +14,14 @@ class Action extends Model
         'created_by',
         'customer_id',
     ];
+    public function customer(){
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+
 }

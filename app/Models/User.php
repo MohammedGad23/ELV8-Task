@@ -30,6 +30,29 @@ class User extends Authenticatable
         'created_by',
     ];
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'created_by');
+    }
+
+    public function actions()
+    {
+        return $this->hasMany(Action::class, 'created_by');
+    }
+
+
+    public function employeeAssignedToCustomers()
+    {
+        return $this->hasMany(AssignedCustomer::class, 'employee_id');
+    }
+
+
+
     /**
      * The attributes that should be hidden for serialization.
      *

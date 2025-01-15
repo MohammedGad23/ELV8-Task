@@ -5,7 +5,7 @@ namespace App\Http\Requests\AuthRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-class LoginRequest extends FormRequest
+class CustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,38 +22,26 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        // can login by username or email
-        $loginField = $this->getLoginField();
-
-        $rules = [
-
+        // Note that you can add admin or employee
+        return [
+            'name'=>['required', 'string'],
+            'phone'=>['required','unique:customers','regex:/^(\+?\d{1,4}[\s\-]?)?(\(?\d{1,4}\)?[\s\-]?)?[\d\s\-]{7,15}$/'],
+            'email'=>['required','email','unique:customers'],
+            'gender'=>['required','in:male,female'],
         ];
-
-        if ($loginField === 'email') {
-            $rules = [
-                'username' =>['required','string','exists:users,email'],
-                'password' => 'required|string',
-            ];
-        } else {
-            $rules = [
-                'username' =>['required','string','exists:users,username'],
-                'password' => 'required|string',
-            ];
-        }
-
-        return $rules;
     }
 
-    private function getLoginField()
+    public function messages()
     {
-        $login = $this->input('username');
-
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-            return 'email';
-        }
-
-        return 'username';
+        return [
+            'email.email' => 'Email must be a valid email address.',
+            'email.unique' => 'The email has already been existed.',
+            'phone.unique' => 'The phone has already been existed.',
+            'gender.required' => 'Gender is required.',
+            'gender.in'=>'gender must be male or female',
+        ];
     }
+
 
 
     protected function failedValidation(Validator $validator)

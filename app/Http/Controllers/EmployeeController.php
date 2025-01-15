@@ -3,10 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Action;
 use Illuminate\Http\Request;
+use App\Http\Requests\ActionRequest;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
+    public function AddActionToCustomer(ActionRequest $request)
+    {
+        try {
+            $action = Action::create(
+                array_merge($request->all(),
+                [
+                    'created_by' => Auth::user()->id
+                ])
+            );
+
+            return response()->json([
+                'message' => 'Action added successfully',
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something wrong, please confirm your data and try again.',
+            ], 403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */

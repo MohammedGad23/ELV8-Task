@@ -14,4 +14,10 @@ class Customer extends Model
         'gender',
         'created_by',
     ];
+    public function createdBy(){
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    public function actions(){
+        return $this->hasMany(Action::class, 'customer_id');
+    }
 }
